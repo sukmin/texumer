@@ -61,7 +61,7 @@ func main() {
 					fmt.Println(strconv.Itoa(partition) + " partition error : " + err.Error())
 					break
 				}
-				fmt.Printf("[%v],topic:[%v],partition:[%v],offset:[%v] key:[%s]\n", m.Time, m.Topic, m.Partition, m.Offset, string(m.Key))
+				fmt.Printf("[%v],topic:[%v],partition:[%v],offset:[%v],key:[%s]\n", m.Time, m.Topic, m.Partition, m.Offset, string(m.Key))
 				fmt.Println(string(m.Value))
 			}
 		}(i)
