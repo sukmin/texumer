@@ -39,7 +39,7 @@ func main() {
 				Brokers:   brokers,
 				Topic:     topicName,
 				Partition: partition,
-				MinBytes:  1,    // 10KB
+				MinBytes:  1,    // 1B
 				MaxBytes:  10e6, // 10MB
 			})
 			defer func() {
