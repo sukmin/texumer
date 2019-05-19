@@ -16,6 +16,8 @@ import (
 
 var wg sync.WaitGroup
 
+const listenPartitionNumber = 300
+
 func main() {
 	//arguments : 실행파일명 브로커주소 토픽명
 	arguments := os.Args
@@ -27,13 +29,11 @@ func main() {
 	brokers := strings.Split(arguments[1], ",")
 	topicName := arguments[2]
 
-	var numberOfPartitions int = 300
-
 	fmt.Println("brokers : ", brokers)
 	fmt.Println("topicName : ", topicName)
 
-	wg.Add(numberOfPartitions);
-	for i := 0; i < numberOfPartitions; i++ {
+	wg.Add(listenPartitionNumber);
+	for i := 0; i < listenPartitionNumber; i++ {
 		go func(partition int) {
 			r := kafka.NewReader(kafka.ReaderConfig{
 				Brokers:   brokers,
@@ -43,10 +43,12 @@ func main() {
 				MaxBytes:  10e6, // 10MB
 			})
 			defer func() {
-				r.Close()
+				_ = r.Close()
 				wg.Done()
 			}()
 
+			// 파티션정보를 사전에 알수있는 방법이 없어서,
+			// 일단 listenPartitionNumber 숫자대로 offset 요청을 보냈을때 3초간 응답이 없으면 없는 파티션으로 간주
 			deadlineContext, _ := context.WithDeadline(context.Background(), time.Now().Add(time.Second*3))
 			err := r.SetOffsetAt(deadlineContext, time.Now())
 			if err != nil {
